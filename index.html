@@ -4,43 +4,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NovaVoice - AI Assistant</title>
+    <title>NovaVoice - Premium AI Booking Assistant</title>
+    <!-- Google Font Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --bg-color: #0f172a;
-            --surface: #1e293b;
+            --bg-color: #080b11;
+            --surface: rgba(17, 24, 39, 0.55);
+            --surface-card: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(59, 130, 246, 0.3);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.35);
             --danger: #ef4444;
+            --danger-glow: rgba(239, 68, 68, 0.3);
             --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.3);
+            --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            padding: 0;
             background-color: var(--bg-color);
             color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: var(--font-family);
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
             min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient Glowing Background Orbs */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            filter: blur(140px);
+            z-index: -1;
+            opacity: 0.25;
+            pointer-events: none;
+        }
+        body::before {
+            top: 5%;
+            left: 10%;
+            background: var(--accent);
+        }
+        body::after {
+            bottom: 10%;
+            right: 15%;
+            background: #8b5cf6;
+        }
+
+        /* Top Header Navigation */
+        header {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            z-index: 10;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .status-badge {
-            position: absolute;
-            top: 2rem;
-            background: var(--surface);
+            background: rgba(17, 24, 39, 0.8);
             padding: 0.5rem 1rem;
             border-radius: 999px;
-            font-size: 0.875rem;
-            font-weight: 500;
+            font-size: 0.85rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            border: 1px solid #334155;
+            gap: 0.6rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .dot {
@@ -48,26 +122,72 @@
             height: 8px;
             border-radius: 50%;
             background: var(--text-muted);
+            transition: all 0.3s;
         }
 
         .dot.live {
             background: var(--success);
-            box-shadow: 0 0 10px var(--success);
+            box-shadow: 0 0 10px var(--success-glow);
         }
 
         .dot.speaking {
             background: var(--accent);
-            box-shadow: 0 0 10px var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
         }
 
+        /* App Main Columns */
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 2rem;
+            width: 95%;
+            max-width: 1200px;
+            margin: 2rem auto;
+            flex-grow: 1;
+            z-index: 5;
+        }
+
+        @media (max-width: 900px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Glassmorphic Panel Base styling */
+        .glass-panel {
+            background: var(--surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Assistant Panel Styling */
+        .assistant-panel {
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .panel-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        /* Pulsing Interactive Orb */
         .orb-container {
             position: relative;
-            width: 150px;
-            height: 150px;
+            width: 160px;
+            height: 160px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
 
         .call-button {
@@ -75,20 +195,31 @@
             height: 100px;
             border-radius: 50%;
             border: none;
-            background: var(--surface);
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             color: var(--text-main);
-            font-size: 2rem;
+            font-size: 2.2rem;
             cursor: pointer;
             z-index: 10;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            transition: background 0.3s;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* The visualizer will dynamically inject scale values here */
+        .call-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px var(--accent-glow),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        }
+
         .call-button.active {
-            background: var(--danger);
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             color: white;
             transform: scale(var(--mic-scale, 1));
+            box-shadow: 0 0 35px var(--danger-glow);
         }
 
         .ring {
@@ -99,51 +230,69 @@
             border: 2px solid var(--accent);
             opacity: 0;
             pointer-events: none;
+            transition: transform 0.05s ease-out, opacity 0.15s;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .ring-1 {
             transform: scale(var(--ai-scale, 1));
-            transition: transform 0.05s ease-out, opacity 0.1s;
+        }
+
+        .ring-2 {
+            border-color: #8b5cf6;
+            transform: scale(calc(var(--ai-scale, 1) * 1.2));
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+            transition-delay: 0.02s;
         }
 
         .speaking-mode .ring {
-            opacity: 0.8;
+            opacity: 0.7;
         }
 
+        /* Transcript Container Styling */
         .transcript-container {
-            width: 90%;
-            max-width: 500px;
-            height: 300px;
-            background: var(--surface);
+            width: 100%;
+            height: 320px;
+            background: rgba(8, 11, 21, 0.4);
             border-radius: 16px;
-            padding: 1rem;
+            padding: 1.25rem;
             overflow-y: auto;
-            border: 1px solid #334155;
+            border: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 1rem;
         }
 
         .message {
-            font-size: 0.95rem;
+            font-size: 0.925rem;
             line-height: 1.5;
             padding: 0.75rem 1rem;
-            border-radius: 12px;
-            max-width: 80%;
+            border-radius: 14px;
+            max-width: 85%;
             width: fit-content;
             word-wrap: break-word;
+            animation: fadeIn 0.25s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .user-msg {
-            background: #334155;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             align-self: flex-end;
-            color: white;
-            border-bottom-right-radius: 4px;
+            color: #f8fafc;
+            border-bottom-right-radius: 3px;
         }
 
         .ai-msg {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.2);
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.15);
             align-self: flex-start;
             color: #60a5fa;
-            border-bottom-left-radius: 4px;
+            border-bottom-left-radius: 3px;
         }
 
         .system-msg {
@@ -151,79 +300,508 @@
             font-size: 0.8rem;
             color: var(--text-muted);
             font-style: italic;
+            background: transparent;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0;
+            max-width: 100%;
         }
 
         .tool-card {
             align-self: center;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px dashed var(--success);
+            background: rgba(16, 185, 129, 0.06);
+            border: 1px dashed rgba(16, 185, 129, 0.3);
             color: #34d399;
             font-family: monospace;
-            font-size: 0.85rem;
-            border-radius: 8px;
+            font-size: 0.8rem;
+            border-radius: 10px;
             padding: 0.75rem 1rem;
-            width: 90%;
+            width: 100%;
             box-sizing: border-box;
             white-space: pre-wrap;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
+        /* Booking Dashboard Styling */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dashboard-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .refresh-btn {
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .booking-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            overflow-y: auto;
+            flex-grow: 1;
+            height: 480px;
+            padding-right: 0.4rem;
+        }
+
+        /* Scrollbar styles for booking list */
+        .booking-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .booking-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .booking-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+        }
+        .booking-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .booking-card {
+            background: var(--surface-card);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .booking-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .booking-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .booking-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            max-width: 82%;
+        }
+
+        .booking-guest {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 1.05rem;
+            word-break: break-all;
+        }
+
+        .booking-date {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .calendar-link {
+            color: var(--accent);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.12);
+            border-radius: 10px;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+        }
+
+        .calendar-link:hover {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .booking-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn-card {
+            flex: 1;
+            padding: 0.55rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-reschedule {
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+        }
+
+        .btn-reschedule:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+
+        .btn-cancel {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            color: #f87171;
+        }
+
+        .btn-cancel:hover {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+            box-shadow: 0 4px 12px var(--danger-glow);
+        }
+
+        /* Empty & Loading states */
+        .empty-bookings, .loading-bookings {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 300px;
+            color: var(--text-muted);
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid rgba(59, 130, 246, 0.15);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s infinite linear;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Custom Modal overlays */
         .setup-modal {
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.95);
+            background: rgba(8, 11, 21, 0.95);
+            backdrop-filter: blur(12px);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 100;
+            transition: all 0.3s;
         }
 
         .setup-modal.hidden {
+            opacity: 0;
+            pointer-events: none;
             display: none;
         }
 
-        .api-input {
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            background: #0f172a;
-            color: white;
-            width: 300px;
+        .setup-content {
+            background: rgba(17, 24, 39, 0.7);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            width: 90%;
+            max-width: 440px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .setup-logo {
+            font-size: 2.5rem;
             margin-bottom: 1rem;
         }
 
+        .setup-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .setup-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .api-input {
+            width: 100%;
+            padding: 0.85rem 1.25rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(8, 11, 21, 0.6);
+            color: white;
+            font-family: inherit;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .api-input:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+
         .btn-start {
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            background: var(--success);
+            width: 100%;
+            padding: 0.9rem;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: white;
             border: none;
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 1rem;
             cursor: pointer;
+            box-shadow: 0 8px 20px var(--accent-glow);
+            transition: all 0.2s;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 24px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Reschedule Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(8, 11, 21, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: #111827;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 420px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+        }
+
+        .modal-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(8, 11, 21, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: white;
+            font-family: inherit;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+
+        .modal-input:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        .btn-modal {
+            padding: 0.65rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-modal-cancel {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-modal-cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .btn-modal-submit {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-modal-submit:hover {
+            background: #2563eb;
+            box-shadow: 0 4px 12px var(--accent-glow);
         }
     </style>
 </head>
 
 <body>
 
+    <header>
+        <div class="logo-area">
+            <span class="logo-icon">🎙️</span>
+            <span class="logo-text">NovaVoice AI</span>
+        </div>
+        <div class="status-badge" id="statusBadge">
+            <div class="dot" id="statusDot"></div>
+            <span id="statusText">Disconnected</span>
+        </div>
+    </header>
+
     <div id="setupModal" class="setup-modal">
-        <h2>Welcome to NovaVoice</h2>
-        <input type="password" id="apiKey" class="api-input" placeholder="Enter Gemini API Key (AIza...)">
-        <button id="startSessionBtn" class="btn-start">Connect to Agent</button>
+        <div class="setup-content">
+            <div class="setup-logo">🤖</div>
+            <h2 class="setup-title">NovaVoice Agent</h2>
+            <p class="setup-desc">Connect to the Gemini Live AI Calling assistant</p>
+            <input type="password" id="apiKey" class="api-input" placeholder="Enter Gemini API Key (AIza...)">
+            <button id="startSessionBtn" class="btn-start">Launch Assistant</button>
+        </div>
     </div>
 
-    <div class="status-badge" id="statusBadge">
-        <div class="dot" id="statusDot"></div>
-        <span id="statusText">Disconnected</span>
+    <div class="app-container">
+        <!-- Column 1: Voice Calling Panel -->
+        <div class="glass-panel assistant-panel">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.25rem;">Live AI Assistant</h3>
+            <p class="panel-subtitle">Engage in real-time calendar calling operations</p>
+            
+            <div class="orb-container" id="orbContainer">
+                <div class="ring ring-1"></div>
+                <div class="ring ring-2"></div>
+                <button class="call-button" id="callBtn">🎙️</button>
+            </div>
+            
+            <div class="transcript-container" id="transcript">
+                <div class="message system-msg">Waiting for connection initialization...</div>
+            </div>
+        </div>
+
+        <!-- Column 2: Booking Dashboard Panel -->
+        <div class="glass-panel dashboard-panel">
+            <div class="dashboard-header">
+                <h3 class="dashboard-title">
+                    <span>📅</span> Booking Dashboard
+                </h3>
+                <button class="refresh-btn" id="refreshBtn">
+                    🔄 Refresh
+                </button>
+            </div>
+            
+            <div class="booking-list" id="bookingList">
+                <div class="loading-bookings">
+                    <div class="spinner"></div>
+                    <p>Fetching scheduled bookings...</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="orb-container" id="orbContainer">
-        <div class="ring"></div>
-        <button class="call-button" id="callBtn">🎙️</button>
-    </div>
-
-    <div class="transcript-container" id="transcript">
-        <div class="message system-msg">Waiting to connect...</div>
+    <!-- Reschedule Modal -->
+    <div class="modal-overlay" id="rescheduleModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Reschedule Meeting</h3>
+            
+            <label class="modal-label">GUEST MEETING</label>
+            <p id="rescheduleGuestText" style="font-size: 1rem; color: #fff; margin-bottom: 1.25rem; font-weight: 600;"></p>
+            
+            <label class="modal-label">NEW DATE & TIME</label>
+            <input type="datetime-local" id="newDateTimeInput" class="modal-input">
+            
+            <div class="modal-buttons">
+                <button class="btn-modal btn-modal-cancel" id="closeRescheduleBtn">Cancel</button>
+                <button class="btn-modal btn-modal-submit" id="submitRescheduleBtn">Reschedule</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -235,7 +813,16 @@
             statusText: document.getElementById('statusText'),
             statusDot: document.getElementById('statusDot'),
             transcript: document.getElementById('transcript'),
-            orbContainer: document.getElementById('orbContainer')
+            orbContainer: document.getElementById('orbContainer'),
+            refreshBtn: document.getElementById('refreshBtn'),
+            bookingList: document.getElementById('bookingList'),
+            
+            // Reschedule Modal elements
+            rescheduleModal: document.getElementById('rescheduleModal'),
+            rescheduleGuestText: document.getElementById('rescheduleGuestText'),
+            newDateTimeInput: document.getElementById('newDateTimeInput'),
+            closeRescheduleBtn: document.getElementById('closeRescheduleBtn'),
+            submitRescheduleBtn: document.getElementById('submitRescheduleBtn')
         };
 
         let isCallActive = false;
@@ -254,6 +841,191 @@
         let aiAnalyser = null;
         let visualizerId = null;
 
+        // Dashboard State
+        let activeRescheduleEventId = null;
+
+        // Auto-fetch meetings on dashboard load
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchBookings();
+        });
+
+        // Dashboard Refresh trigger
+        UI.refreshBtn.addEventListener('click', () => {
+            fetchBookings();
+        });
+
+        // Close Reschedule Modal
+        UI.closeRescheduleBtn.addEventListener('click', () => {
+            UI.rescheduleModal.classList.remove('active');
+            activeRescheduleEventId = null;
+        });
+
+        // Submit manual Reschedule
+        UI.submitRescheduleBtn.addEventListener('click', async () => {
+            const inputVal = UI.newDateTimeInput.value;
+            if (!inputVal) return alert("Please select a new date and time.");
+
+            // Convert to local timezone ISO 8601 offset format
+            const localDt = new Date(inputVal);
+            if (isNaN(localDt.getTime())) return alert("Invalid date.");
+
+            const offset = -localDt.getTimezoneOffset();
+            const diff = offset >= 0 ? '+' : '-';
+            const pad = (num) => String(num).padStart(2, '0');
+            const offsetHours = pad(Math.floor(Math.abs(offset) / 60));
+            const offsetMins = pad(Math.abs(offset) % 60);
+
+            const newIsoStr = localDt.getFullYear() +
+                '-' + pad(localDt.getMonth() + 1) +
+                '-' + pad(localDt.getDate()) +
+                'T' + pad(localDt.getHours()) +
+                ':' + pad(localDt.getMinutes()) +
+                ':' + pad(localDt.getSeconds()) +
+                diff + offsetHours + ':' + offsetMins;
+
+            UI.rescheduleModal.classList.remove('active');
+            
+            // Show loading list
+            UI.bookingList.innerHTML = `
+                <div class="loading-bookings">
+                    <div class="spinner"></div>
+                    <p>Rescheduling meeting...</p>
+                </div>
+            `;
+
+            try {
+                const res = await fetch("http://127.0.0.1:5000/api/reschedule_meeting", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        event_id: activeRescheduleEventId,
+                        new_date_time: newIsoStr
+                    })
+                });
+                const data = await res.json();
+                alert(data.result);
+            } catch (err) {
+                console.error("Manual Reschedule Error:", err);
+                alert("Failed to reschedule meeting.");
+            } finally {
+                activeRescheduleEventId = null;
+                fetchBookings();
+            }
+        });
+
+        // Fetch bookings function
+        async function fetchBookings() {
+            UI.bookingList.innerHTML = `
+                <div class="loading-bookings">
+                    <div class="spinner"></div>
+                    <p>Fetching scheduled bookings...</p>
+                </div>
+            `;
+
+            try {
+                const res = await fetch("http://127.0.0.1:5000/api/list_meetings");
+                const data = await res.json();
+                
+                if (!data.meetings || data.meetings.length === 0) {
+                    UI.bookingList.innerHTML = `
+                        <div class="empty-bookings">
+                            <span style="font-size: 2.2rem;">📂</span>
+                            <p>No upcoming meetings found.<br><span style="font-size: 0.8rem; color: #64748b;">Schedule a meeting using the AI Voice Agent!</span></p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                UI.bookingList.innerHTML = "";
+                data.meetings.forEach(meeting => {
+                    // Format start date beautifully
+                    const startDt = new Date(meeting.start);
+                    const formattedDate = startDt.toLocaleString('en-US', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true
+                    });
+
+                    const card = document.createElement('div');
+                    card.className = 'booking-card';
+                    card.innerHTML = `
+                        <div class="booking-info">
+                            <div class="booking-details">
+                                <div class="booking-guest">${meeting.guest}</div>
+                                <div class="booking-date">
+                                    <span>📅</span> ${formattedDate}
+                                </div>
+                            </div>
+                            <a href="${meeting.htmlLink}" target="_blank" class="calendar-link" title="Open in Google Calendar">📅</a>
+                        </div>
+                        <div class="booking-actions">
+                            <button class="btn-card btn-reschedule" onclick="manualReschedule('${meeting.id}', '${meeting.guest.replace(/'/g, "\\'")}', '${meeting.start}')">
+                                🔄 Reschedule
+                            </button>
+                            <button class="btn-card btn-cancel" onclick="manualCancel('${meeting.id}', '${meeting.guest.replace(/'/g, "\\'")}', '${formattedDate}')">
+                                ❌ Cancel
+                            </button>
+                        </div>
+                    `;
+                    UI.bookingList.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error("Failed to fetch bookings:", error);
+                UI.bookingList.innerHTML = `
+                    <div class="empty-bookings">
+                        <span style="font-size: 2.2rem; color: var(--danger)">⚠️</span>
+                        <p>Connection to local server failed.<br><span style="font-size: 0.8rem; color: #64748b;">Ensure api_server.py is running on http://localhost:5000</span></p>
+                    </div>
+                `;
+            }
+        }
+
+        // Global functions for manual triggers from dynamically created cards
+        window.manualCancel = async function(eventId, guestName, startStr) {
+            const confirmed = confirm(`Are you sure you want to cancel the booking for ${guestName} scheduled on ${startStr}?`);
+            if (!confirmed) return;
+
+            UI.bookingList.innerHTML = `
+                <div class="loading-bookings">
+                    <div class="spinner"></div>
+                    <p>Cancelling booking...</p>
+                </div>
+            `;
+
+            try {
+                const res = await fetch("http://127.0.0.1:5000/api/cancel_meeting", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ event_id: eventId })
+                });
+                const data = await res.json();
+                alert(data.result);
+            } catch (err) {
+                console.error("Manual Cancel Error:", err);
+                alert("Failed to cancel meeting.");
+            } finally {
+                fetchBookings();
+            }
+        }
+
+        window.manualReschedule = function(eventId, guestName, currentStartIso) {
+            activeRescheduleEventId = eventId;
+            UI.rescheduleGuestText.innerText = guestName;
+            
+            // Format current ISO to yyyy-MM-ddThh:mm for input value
+            const dt = new Date(currentStartIso);
+            const pad = (n) => String(n).padStart(2, '0');
+            const localVal = `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+            UI.newDateTimeInput.value = localVal;
+
+            UI.rescheduleModal.classList.add('active');
+        }
+
+        // Connect to agent event listener
         UI.startBtn.addEventListener('click', () => {
             const key = UI.apiKeyInput.value.trim();
             if (!key) return alert("API Key is required.");
@@ -272,9 +1044,10 @@
                 // 🧠 CONTEXT INJECTION: Give Gemini the exact date and timezone
                 const currentDate = new Date().toString();
                 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-                const systemPrompt = `You are a professional, helpful booking assistant. 
+                const systemPrompt = `You are a professional, helpful voice assistant booking agent. 
                 CRITICAL CONTEXT: The current date and time is ${currentDate}. The user is in the ${timeZone} timezone. 
-                Always check availability first before booking a meeting to prevent double-booking. When booking or checking, format dates strictly to ISO 8601 offset to the user's timezone.`;
+                You can help users check availability, book new meetings, reschedule existing meetings, or cancel meetings.
+                Always check availability first before booking or rescheduling a meeting to prevent double-booking. When performing calendar actions (booking, checking availability, rescheduling, or cancelling), format dates strictly to ISO 8601 offset to the user's timezone.`;
 
                 ws.send(JSON.stringify({
                     setup: {
@@ -309,6 +1082,31 @@
                                         },
                                         required: ["title", "date_time", "guest_email"]
                                     }
+                                },
+                                {
+                                    name: "cancel_meeting",
+                                    description: "Cancels/Deletes a scheduled meeting on the calendar.",
+                                    parameters: {
+                                        type: "OBJECT",
+                                        properties: {
+                                            guest_email: { type: "STRING", description: "Guest email address" },
+                                            date_time: { type: "STRING", description: "ISO 8601 date and time of the meeting to cancel (e.g., 2026-05-26T09:00:00+05:30)" }
+                                        },
+                                        required: ["guest_email", "date_time"]
+                                    }
+                                },
+                                {
+                                    name: "reschedule_meeting",
+                                    description: "Reschedules an existing meeting to a new date and time.",
+                                    parameters: {
+                                        type: "OBJECT",
+                                        properties: {
+                                            guest_email: { type: "STRING", description: "Guest email address" },
+                                            current_date_time: { type: "STRING", description: "The current scheduled ISO 8601 date and time of the meeting to change" },
+                                            new_date_time: { type: "STRING", description: "The new desired ISO 8601 date and time (e.g., 2026-05-26T10:30:00+05:30)" }
+                                        },
+                                        required: ["guest_email", "current_date_time", "new_date_time"]
+                                    }
                                 }
                             ]
                         }]
@@ -329,14 +1127,23 @@
 
                         let endpoint = "";
                         let visualOutput = "";
+                        let shouldRefreshList = false;
 
-                        // Handle logic for both tools dynamically
                         if (call.name === "book_meeting") {
                             endpoint = "http://127.0.0.1:5000/api/book_meeting";
-                            visualOutput = `⚙️ Action: book_meeting()\n↳ Title: ${args.title}\n↳ Time: ${args.date_time}`;
+                            visualOutput = `⚙️ Action: book_meeting()\n↳ Guest: ${args.guest_email}\n↳ Time: ${args.date_time}`;
+                            shouldRefreshList = true;
                         } else if (call.name === "check_availability") {
                             endpoint = "http://127.0.0.1:5000/api/check_availability";
                             visualOutput = `🔍 Action: check_availability()\n↳ Date: ${args.date}`;
+                        } else if (call.name === "cancel_meeting") {
+                            endpoint = "http://127.0.0.1:5000/api/cancel_meeting";
+                            visualOutput = `❌ Action: cancel_meeting()\n↳ Guest: ${args.guest_email}\n↳ Time: ${args.date_time}`;
+                            shouldRefreshList = true;
+                        } else if (call.name === "reschedule_meeting") {
+                            endpoint = "http://127.0.0.1:5000/api/reschedule_meeting";
+                            visualOutput = `🔄 Action: reschedule_meeting()\n↳ Guest: ${args.guest_email}\n↳ Current: ${args.current_date_time}\n↳ New: ${args.new_date_time}`;
+                            shouldRefreshList = true;
                         }
 
                         addToolCard(visualOutput);
@@ -349,6 +1156,11 @@
                             });
                             const data = await res.json();
                             responses.push({ id: call.id, name: call.name, response: { output: data.result } });
+                            
+                            // Dynamically refresh the dashboard in background if a modifying action completed
+                            if (shouldRefreshList) {
+                                setTimeout(fetchBookings, 800);
+                            }
                         } catch (error) {
                             console.error("Backend Error:", error);
                             responses.push({ id: call.id, name: call.name, response: { output: "Error connected to local Python API." } });
