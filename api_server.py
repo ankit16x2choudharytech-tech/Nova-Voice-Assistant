@@ -1,8 +1,10 @@
 import sys
+import traceback
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 
 from flask import Flask, request, jsonify
+import traceback
 from flask_cors import CORS
 from calendar_tool import (
     book_meeting, 
@@ -24,13 +26,27 @@ def handle_list_meetings():
     print(f"✅ [API RESPONSE] Found {len(meetings)} meetings")
     return jsonify({"meetings": meetings})
 
+
+@app.route('/api/health', methods=['GET'])
+def handle_health():
+    return jsonify({"status": "ok"})
+
 @app.route('/api/book_meeting', methods=['POST'])
 def handle_booking():
     data = request.json
     print(f"\n🔔 [API REQUEST] Booking {data.get('title')} at {data.get('date_time')}")
     result = book_meeting(date_time_iso=data.get('date_time'), name=data.get('guest_email'))
     print(f"✅ [API RESPONSE] {result}")
-    return jsonify({"result": result})
+
+    # After booking (mock or real), return the current meetings list so the UI
+    # can immediately refresh the dashboard without waiting for a separate fetch.
+    try:
+        meetings = list_upcoming_meetings()
+    except Exception as e:
+        print(f"⚠️ Could not fetch meetings after booking: {e}")
+        meetings = []
+
+    return jsonify({"result": result, "meetings": meetings})
 
 @app.route('/api/check_availability', methods=['POST'])
 def handle_availability():
@@ -80,5 +96,15 @@ def handle_reschedule():
     return jsonify({"result": result})
 
 if __name__ == '__main__':
-    print("🚀 Local API Bridge running on http://127.0.0.1:5000")
-    app.run(port=5000)
+    print("🚀 Local API Bridge running on http://0.0.0.0:5000")
+    # Enable debug and propagate exceptions in development to get full tracebacks
+    app.debug = True
+    app.config['PROPAGATE_EXCEPTIONS'] = True
+
+    # Add a global exception handler to ensure errors are logged to console
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+    app.run(host='0.0.0.0', port=5000)

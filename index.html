@@ -806,10 +806,13 @@
 
     <script>
         const getBackendUrl = (path) => {
-            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                if (window.location.port !== '5000' && window.location.port !== '') {
-                    return `http://127.0.0.1:5000${path}`;
-                }
+            // When running the UI locally (file://) or on localhost, always point to the
+            // local Python API at port 5000 so fetch() reaches api_server.py.
+            if (window.location.protocol === 'file:' ||
+                window.location.hostname === '' ||
+                window.location.hostname === '127.0.0.1' ||
+                window.location.hostname === 'localhost') {
+                return `http://127.0.0.1:5000${path}`;
             }
             return path;
         };

@@ -1,0 +1,26 @@
+[
+    {
+        "id": "3c1ec507-cca0-401e-820c-29383271a42d",
+        "guest": "test@example.com",
+        "summary": "NovaVoice Demo: test@example.com",
+        "start": "2026-07-20T10:00:00+05:30",
+        "end": "2026-07-20T10:30:00+05:30",
+        "htmlLink": "https://calendar.google.com/"
+    },
+    {
+        "id": "5c385b85-cb48-47bd-95ed-c0ece209f4bb",
+        "guest": "ws-test@example.com",
+        "summary": "NovaVoice Demo: ws-test@example.com",
+        "start": "2026-07-21T09:00:00+05:30",
+        "end": "2026-07-21T09:30:00+05:30",
+        "htmlLink": "https://calendar.google.com/"
+    },
+    {
+        "id": "06059291-381f-4546-bf00-7ee640aa6a12",
+        "guest": "voice-user@example.com",
+        "summary": "NovaVoice Demo: voice-user@example.com",
+        "start": "2026-07-22T11:00:00+05:30",
+        "end": "2026-07-22T11:30:00+05:30",
+        "htmlLink": "https://calendar.google.com/"
+    }
+]
