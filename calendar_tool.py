@@ -35,6 +35,15 @@ def write_mock_bookings(bookings: list):
 
 def get_calendar_service():
     """Retrieves Google Calendar service or raises exception if not authenticated."""
+    token_json = os.getenv("GOOGLE_TOKEN_JSON")
+    if token_json:
+        try:
+            info = json.loads(token_json)
+            creds = Credentials.from_authorized_user_info(info, ['https://www.googleapis.com/auth/calendar.events'])
+            return build('calendar', 'v3', credentials=creds)
+        except Exception as e:
+            print(f"❌ Failed to parse GOOGLE_TOKEN_JSON environment variable: {e}")
+
     if not os.path.exists('token.json'):
         raise Exception("Calendar is not authenticated. Missing token.json.")
     creds = Credentials.from_authorized_user_file('token.json', ['https://www.googleapis.com/auth/calendar.events'])

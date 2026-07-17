@@ -805,6 +805,15 @@
     </div>
 
     <script>
+        const getBackendUrl = (path) => {
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                if (window.location.port !== '5000' && window.location.port !== '') {
+                    return `http://127.0.0.1:5000${path}`;
+                }
+            }
+            return path;
+        };
+
         const UI = {
             setupModal: document.getElementById('setupModal'),
             startBtn: document.getElementById('startSessionBtn'),
@@ -894,7 +903,7 @@
             `;
 
             try {
-                const res = await fetch("http://127.0.0.1:5000/api/reschedule_meeting", {
+                const res = await fetch(getBackendUrl("/api/reschedule_meeting"), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -923,7 +932,7 @@
             `;
 
             try {
-                const res = await fetch("http://127.0.0.1:5000/api/list_meetings");
+                const res = await fetch(getBackendUrl("/api/list_meetings"));
                 const data = await res.json();
                 
                 if (!data.meetings || data.meetings.length === 0) {
@@ -997,7 +1006,7 @@
             `;
 
             try {
-                const res = await fetch("http://127.0.0.1:5000/api/cancel_meeting", {
+                const res = await fetch(getBackendUrl("/api/cancel_meeting"), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ event_id: eventId })
@@ -1130,18 +1139,18 @@
                         let shouldRefreshList = false;
 
                         if (call.name === "book_meeting") {
-                            endpoint = "http://127.0.0.1:5000/api/book_meeting";
+                            endpoint = getBackendUrl("/api/book_meeting");
                             visualOutput = `⚙️ Action: book_meeting()\n↳ Guest: ${args.guest_email}\n↳ Time: ${args.date_time}`;
                             shouldRefreshList = true;
                         } else if (call.name === "check_availability") {
-                            endpoint = "http://127.0.0.1:5000/api/check_availability";
+                            endpoint = getBackendUrl("/api/check_availability");
                             visualOutput = `🔍 Action: check_availability()\n↳ Date: ${args.date}`;
                         } else if (call.name === "cancel_meeting") {
-                            endpoint = "http://127.0.0.1:5000/api/cancel_meeting";
+                            endpoint = getBackendUrl("/api/cancel_meeting");
                             visualOutput = `❌ Action: cancel_meeting()\n↳ Guest: ${args.guest_email}\n↳ Time: ${args.date_time}`;
                             shouldRefreshList = true;
                         } else if (call.name === "reschedule_meeting") {
-                            endpoint = "http://127.0.0.1:5000/api/reschedule_meeting";
+                            endpoint = getBackendUrl("/api/reschedule_meeting");
                             visualOutput = `🔄 Action: reschedule_meeting()\n↳ Guest: ${args.guest_email}\n↳ Current: ${args.current_date_time}\n↳ New: ${args.new_date_time}`;
                             shouldRefreshList = true;
                         }
